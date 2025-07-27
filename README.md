@@ -1,90 +1,97 @@
-Document Optimizer for LLMs
+# Optimizer-RAG
 
-A lightweight Python library and Streamlit web application to compress large documents into the most relevant chunks for downstream use in LLM-based workflows.
+A lightweight Python library to compress large documents using Groq LLMs and token-budgeted chunk selection. Ideal for RAG (Retrieval-Augmented Generation) workflows and agentic systems that need concise, informative summaries within context limits.
 
-It leverages semantic chunking, scoring, and selection to reduce token count while preserving essential content, making it ideal for Retrieval-Augmented Generation (RAG), summarization, and QA pipelines.
+## Features
 
-Features
+- 🔍 Query-focused summarization of document chunks  
+- 📉 Token-based chunk selection for context fitting  
+- 🧠 Integration with Groq’s LLMs (LLaMA-3.1)  
+- ⚙️ Plug-and-play support for RAG pipelines, LangChain tools, or custom agents
 
-Token-based document chunk compression
+---
 
-Semantic scoring and chunk selection with Maximal Marginal Relevance (MMR) or similar methods
+## Installation
 
-Integration with LangChain and Groq LLMs
-
-Modular Python package (optimizer) with reusable backend logic
-
-Streamlit frontend for easy document upload and summarization
-
-Supports sentence-transformers for embeddings and tiktoken for token counting
-
-Folder Structure
-
-.
-├── app.py (Streamlit frontend application)
-├── requirements.txt
-├── sample_files/
-│ └── sample_doc.txt (Sample input document for testing)
-└── optimizer/ (Python module)
-├── init.py
-├── compressor.py (compress_chunk function)
-├── retriever_wrapper.py
-├── scorer.py
-├── selector.py
-└── token_utils.py
-
-Getting Started
-
-Clone the Repository
-
-git clone https://github.com/yourname/document-optimizer.git
-cd document-optimizer
-
-Install Requirements
-
-pip install -r requirements.txt
-
-Run the Streamlit App
-
-streamlit run app.py
-
-Usage
-
-As a Python Library
-
-Import the main compression function and run on your document text:
-
-from optimizer.compressor import compress_chunks
-
-chunks = compress_chunks(
- doc_text="...your document text...",
- top_k=5,
- chunk_size=300,
- stride=150,
-)
-
-Development
-
-Install Your Package Locally (Editable Mode)
-
-From the root directory:
-
+```bash
+git clone https://github.com/your-username/optimizer.git
+cd optimizer
 pip install -e .
+```
 
-This allows you to edit the code in optimizer/ and see changes immediately without reinstalling.
+Make sure you have a `.env` file with your Groq API key:
 
-Import Shortcut
+```env
+GROQ_API_KEY=your-groq-key
+```
 
-optimizer/init.py enables importing key functions directly:
+---
 
-from optimizer import compress_chunks
+## Usage
 
-Technology Stack
+### 1. Import the library
 
-Python
-Streamlit
-LangChain
-Sentence-Transformers
-Scikit-Learn
-Tiktoken
-Groq LLMs (optional)
+```python
+from optimizer.compressor import compress_chunk, summarize_chunk_with_groq
+```
+
+### 2. Summarize a single chunk
+
+```python
+summary = summarize_chunk_with_groq(
+    chunk="Large input text here...",
+    query="What are the key responsibilities?",
+    model="llama-3.1-8b-instant"
+)
+```
+
+### 3. Compress and select relevant chunks within a token budget
+
+```python
+chunks = ["First chunk of text", "Second chunk of text", ...]
+query = "Summarize benefits of using this product"
+token_budget = 1024
+
+compressed = compress_chunk(chunks, query, token_budget)
+
+for i, chunk in enumerate(compressed):
+    print(f"Chunk {i+1}: {chunk}")
+```
+
+---
+
+## Project Structure
+
+```
+optimizer/
+├── __init__.py
+├── compressor.py          # Main logic for summarizing and compressing
+├── token_utils.py         # Token counting utility
+├── selector.py            # Budget-aware chunk selector
+```
+
+---
+
+## Use Cases
+
+- ✂️ **RAG Context Compression**: Reduce token size of retrieved docs  
+- 🤖 **Agent Memory Management**: Keep only informative memory within limits  
+- 📄 **Long Document Summarization**: Turn bulky PDFs into summaries  
+
+---
+
+## Requirements
+
+- Python 3.8+
+- `groq`
+- `tiktoken`
+- `python-dotenv`
+
+Install via:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
