@@ -1,90 +1,66 @@
-Document Optimizer for LLMs
+# Optimizer
 
-A lightweight Python library and Streamlit web application to compress large documents into the most relevant chunks for downstream use in LLM-based workflows.
+Optimizer is a Python library for compressing large documents using LLMs like Groq. It provides functionality for summarizing document chunks based on a query, selecting the most relevant summaries, and managing token budgets effectively — ideal for RAG (Retrieval Augmented Generation) applications.
 
-It leverages semantic chunking, scoring, and selection to reduce token count while preserving essential content, making it ideal for Retrieval-Augmented Generation (RAG), summarization, and QA pipelines.
+## Features
 
-Features
+- Summarize document chunks using Groq models
+- Select relevant summaries based on token limits
+- Easily integrate with any RAG pipeline
 
-Token-based document chunk compression
+## Installation
 
-Semantic scoring and chunk selection with Maximal Marginal Relevance (MMR) or similar methods
+```bash
+pip install optimizer-groq
+```
 
-Integration with LangChain and Groq LLMs
+## Requirements
 
-Modular Python package (optimizer) with reusable backend logic
+Make sure the following packages are installed (handled automatically if installing via pip):
 
-Streamlit frontend for easy document upload and summarization
+```text
+langchain>=0.1.16
+groq
+tiktoken
+numpy
+scikit-learn
+sentence-transformers
+python-dotenv
+```
 
-Supports sentence-transformers for embeddings and tiktoken for token counting
+## Usage
 
-Folder Structure
+```python
+from optimizer.compressor import compress_chunk
 
-.
-├── app.py (Streamlit frontend application)
-├── requirements.txt
-├── sample_files/
-│ └── sample_doc.txt (Sample input document for testing)
-└── optimizer/ (Python module)
-├── init.py
-├── compressor.py (compress_chunk function)
-├── retriever_wrapper.py
-├── scorer.py
-├── selector.py
-└── token_utils.py
+chunks = ["Paragraph 1...", "Paragraph 2...", "Paragraph 3..."]
+query = "What are the benefits of renewable energy?"
+token_budget = 512
 
-Getting Started
+selected = compress_chunk(chunks, query, token_budget)
+print(selected)
+```
 
-Clone the Repository
+You can also customize the model by injecting the model into the library functions like this.
 
-git clone https://github.com/yourname/document-optimizer.git
-cd document-optimizer
+```python
+from openai import OpenAI
+from optimizer.compressor import compress_chunk
 
-Install Requirements
+client = OpenAI(api_key="your-openai-api-key")
 
-pip install -r requirements.txt
+chunks = ["Text A...", "Text B..."]
+query = "Summarize risks."
+token_budget = 400
 
-Run the Streamlit App
+summaries = compress_chunk(chunks, query, token_budget, client=client, model="gpt-4")
+```
 
-streamlit run app.py
 
-Usage
+## Environment Setup
 
-As a Python Library
+Set your Groq API key in a `.env` file:
 
-Import the main compression function and run on your document text:
-
-from optimizer.compressor import compress_chunks
-
-chunks = compress_chunks(
- doc_text="...your document text...",
- top_k=5,
- chunk_size=300,
- stride=150,
-)
-
-Development
-
-Install Your Package Locally (Editable Mode)
-
-From the root directory:
-
-pip install -e .
-
-This allows you to edit the code in optimizer/ and see changes immediately without reinstalling.
-
-Import Shortcut
-
-optimizer/init.py enables importing key functions directly:
-
-from optimizer import compress_chunks
-
-Technology Stack
-
-Python
-Streamlit
-LangChain
-Sentence-Transformers
-Scikit-Learn
-Tiktoken
-Groq LLMs (optional)
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```

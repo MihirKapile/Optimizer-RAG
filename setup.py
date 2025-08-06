@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="optimizer",
-    version="0.1.0",
+    name="optimizer-rag",
+    version="0.1.1",
     packages=find_packages(),
     install_requires=[
         "langchain>=0.1.16",
